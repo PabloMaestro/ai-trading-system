@@ -12,6 +12,20 @@ This repository presents the conceptual design, interface, and system architectu
 
 The system combines user profiling, evaluator reasoning, quant and risk analysis, fundamental market interpretation, a FINMEM-inspired memory structure, a FINCON-style parallel agent organization, and an MDP-based decision layer. The purpose of this public repository is not to expose the private implementation, but to document the overall design approach, the architectural structure, and the user-facing dashboard in a clear and professional format.
 
+## How it works
+
+The system functions as a personalized investment advisor. Through a Gradio-based dashboard, clients interact with the platform in natural language, specifying the asset they want analysed and, optionally, a risk profile to follow. They then receive a structured investment recommendation which they can choose to execute or ignore. Throughout the process, clients also have access to detailed information about the system's full analysis and their portfolio status. 
+
+Internally, the architecture is built around four parallel analysis agents, each working with a specific type of market and client data to produce a detailed diagnosis of the asset being evaluated. Their combined outputs feed into a reinforcement learning algorithm that formalises the current market state and selects the most appropriate investment recommendation. Once a recommendation is made and acted upon, an evaluation layer analyses both the quality of the agents' reasoning and the outcome of the recommendation, using that information to continuously improve each component of the system over time. 
+
+Based on the FinCon paper, the four analysis agents run in parallel, each powered by large language models working on a specific type of data. The Fundamental Agent analyses recent news and SEC filings to produce a sentiment-weighted score. The Quantitative and Risk agents use market price data and historical returns to evaluate the asset's dynamics and risk exposure. Finally, the User Profile Agent classifies the client's risk policy based on both their declared preferences and their observed past execution behaviour. 
+
+One of the system's core strengths lies in its fundamental analysis pipeline, which is why we designed a memory system to model how financial information decays and evolves in relevance over time. Inspired by the FinMem paper, the memory organises every piece of information across three layers, each with its own decay rate, capacity limit, and promotion logic. Every entry is scored through a composite gamma function combining recency, relevance, and importance signals. The system also includes layer promotion and pruning mechanisms to keep the memory accurate and up to date. 
+
+The decision process is formalised as a Markov Decision Process. The current market state is encoded as a discrete 4-tuple combining the technical regime, news sentiment, volatility level, and user risk policy derived from the analysis agents. Given this state, the decision agent selects the most appropriate action using a Dyna-Q reinforcement learning algorithm, which improves the learning speed by complementing real market interactions with simulated experience. 
+
+Finally, the evaluation layer considers historical analysis, recommendation performance, and client behaviour to generate targeted feedback for each analysis agent individually. The goal is to correct systematic biases that agents may develop over time. To prevent overfitting, feedback is only generated after a sufficient number of pipeline executions, and each agent is explicitly instructed to treat it as a minor calibration signal rather than a directive to override its current judgement.
+
 ## Objective
 
 The project was created to study how an intelligent financial system can integrate parallel agent reasoning, adaptive memory, and formal decision modeling in a single environment. Its main objective is to transform complex financial information into organized, explainable, and more interpretable outputs for the user.
@@ -25,8 +39,6 @@ In practical terms, the system was designed to:
 - Apply a FINCON-style parallel agent organization to process complementary financial perspectives simultaneously.
 - Use a Markov Decision Process (MDP) layer to formalize decision support.
 - Present financial outputs through an interactive dashboard that is more readable than isolated technical signals.
-
-In doing so, the system functions as a personalized investment advisor: the user submits a query for a specific company, the full analytical pipeline runs, and a recommendation is returned that the user can choose to execute or ignore.
 
 ## System Architecture
 
@@ -66,14 +78,14 @@ Main technologies and concepts used in the project include:
 
 - Python
 - Gradio
+- Large Language Models
 - Multi-agent reasoning
 - Graph-based workflow orchestration
 - FINMEM-inspired adaptive memory design
 - FINCON-style parallel agent organization
 - Markov Decision Process (MDP) modeling
-- Financial analytics and recommendation support
-- Large Language Models
 - Reinforcement Learning (Q-learning / DynaQ-based decision support)
+- Financial analytics and recommendation support
 - Version control with Git and GitHub
 
 ## Dashboard Gallery
