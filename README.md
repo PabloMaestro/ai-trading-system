@@ -46,8 +46,6 @@ The platform follows a modular architecture in which an interactive front-end co
 
 ![Architecture Diagram](images/architecture.png)
 
-## Architecture Explanation
-
 The overall system is organized around the following conceptual blocks:
 
 - **Interactive Interface:** A Gradio-based front-end used to present the analytical flow and final output to the user.
